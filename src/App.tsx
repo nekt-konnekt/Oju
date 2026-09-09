@@ -452,7 +452,10 @@ ${
       <UploadDocumentModal
         isOpen={isUploadOpen}
         onClose={() => setIsUploadOpen(false)}
+        onUploadFiles={handleDirectFilesUploaded}
         onDocumentAdded={handleDocumentAdded}
+        isProcessing={isUploadingFiles}
+        uploadProgress={uploadStatusMessage}
       />
 
       {/* Site Report Modal */}

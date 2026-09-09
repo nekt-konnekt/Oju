@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   X,
   Cpu,
@@ -21,6 +21,18 @@ export const OcrArchitectureModal: React.FC<OcrArchitectureModalProps> = ({
   const [activeTab, setActiveTab] = useState<'architecture' | 'repos' | 'construction_benchmark'>('architecture');
   const [testText, setTestText] = useState('Item 02.14: 12.5O Tonnes @ ₦1,250,OOO = ₦15,625,OOO');
   const [simulatedRun, setSimulatedRun] = useState(false);
+
+  // Close on Escape key
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
@@ -64,8 +76,18 @@ export const OcrArchitectureModal: React.FC<OcrArchitectureModalProps> = ({
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-xs p-4 sm:p-6">
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-5xl max-h-[92vh] flex flex-col overflow-hidden animate-in fade-in duration-150">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-xs p-4 sm:p-6"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          onClose();
+        }
+      }}
+    >
+      <div
+        className="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-5xl max-h-[92vh] flex flex-col overflow-hidden animate-in fade-in duration-150"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header with #362486 and #00E96E */}
         <div className="bg-[#362486] text-white p-5 sm:px-6 flex items-center justify-between border-b border-[#2a1a6f]">
           <div className="flex items-center space-x-3">
@@ -87,7 +109,13 @@ export const OcrArchitectureModal: React.FC<OcrArchitectureModalProps> = ({
           </div>
 
           <button
-            onClick={onClose}
+            id="close-ocr-architecture-modal"
+            aria-label="Close architecture modal"
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onClose();
+            }}
             className="p-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition cursor-pointer"
           >
             <X className="w-5 h-5" />

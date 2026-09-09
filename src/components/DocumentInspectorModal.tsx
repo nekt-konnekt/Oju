@@ -36,6 +36,18 @@ export const DocumentInspectorModal: React.FC<DocumentInspectorModalProps> = ({
     }
   }, [initialPage, document]);
 
+  // Close on Escape key
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen || !document) return null;
 
   const totalPages = document.pages?.length || document.pageCount || 1;
@@ -52,8 +64,18 @@ export const DocumentInspectorModal: React.FC<DocumentInspectorModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-xs p-4 sm:p-6">
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-5xl max-h-[92vh] flex flex-col overflow-hidden animate-in fade-in duration-150">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-xs p-4 sm:p-6"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          onClose();
+        }
+      }}
+    >
+      <div
+        className="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-5xl max-h-[92vh] flex flex-col overflow-hidden animate-in fade-in duration-150"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Modal Top Header with #362486 and #00E96E */}
         <div className="bg-[#362486] text-white p-4 sm:px-6 flex items-center justify-between border-b border-[#2a1a6f]">
           <div className="flex items-center space-x-3">

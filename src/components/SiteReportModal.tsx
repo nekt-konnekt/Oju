@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   X,
   FileCheck,
@@ -30,6 +30,18 @@ export const SiteReportModal: React.FC<SiteReportModalProps> = ({
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [photoCount, setPhotoCount] = useState<number>(0);
   const [isListening, setIsListening] = useState<boolean>(false);
+
+  // Close on Escape key
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && !isProcessing) {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose, isProcessing]);
 
   if (!isOpen) return null;
 
@@ -173,8 +185,18 @@ Issues & Blockers:
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-xs p-4">
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-lg flex flex-col overflow-hidden animate-in fade-in duration-150">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-xs p-4"
+      onClick={(e) => {
+        if (e.target === e.currentTarget && !isProcessing) {
+          onClose();
+        }
+      }}
+    >
+      <div
+        className="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-lg flex flex-col overflow-hidden animate-in fade-in duration-150"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header with #362486 and #00E96E */}
         <div className="bg-[#362486] text-white p-4 sm:px-6 flex items-center justify-between border-b border-[#2a1a6f]">
           <div className="flex items-center space-x-3">
@@ -190,8 +212,15 @@ Issues & Blockers:
           </div>
 
           <button
-            onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition cursor-pointer"
+            id="close-site-report-modal"
+            aria-label="Close site report modal"
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onClose();
+            }}
+            disabled={isProcessing}
+            className="p-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition cursor-pointer disabled:opacity-40"
           >
             <X className="w-5 h-5" />
           </button>
