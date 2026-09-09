@@ -1,0 +1,6 @@
+{
+  "name": "Oju — Construction intelligence by Agba",
+  "description": "Construction intelligence by Agba. An AI employee for construction businesses that reads project information, understands it, finds things that need attention, and helps the user.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
